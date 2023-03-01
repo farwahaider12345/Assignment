@@ -1,0 +1,146 @@
+Assignment 1:
+I have provided a skeletal code for you below. Based on that, please answer these questions:
+
+Q1: What type of polymorphism has been implemented here?
+Answer- Runtime
+Q2: Why did I choose the type "double" for balance?
+Answer- Balance may be in decimal number.
+Q3: Why did I choose "interestRate" to be of type double and not int?
+Answer- Because of decimal.
+Q4: In the class BankAccount the member variables have been made protected - why not Public or Private?
+Answer- Protected members can be inherited
+Q5: What is "Super" keyword?
+Answer- To call constructor of parent class
+
+public class BankAccount {
+    protected double balance;
+    protected double interestRate;
+    
+    public BankAccount(double initialBalance, double interestRate) {
+        this.balance = initialBalance;
+        this.interestRate = interestRate;
+    }
+    
+    public void deposit(double amount) {
+        balance += amount;
+    }
+    
+    public void withdraw(double amount) {
+        balance -= amount;
+    }
+    
+    public double getBalance() {
+        return balance;
+    }
+    
+    public double calculateInterest() {
+        return balance * interestRate;
+    }
+}
+
+public class PlatinumBankAccount extends BankAccount {
+    public PlatinumBankAccount(double initialBalance) {
+        super(initialBalance, 0.1); // sets interest rate to 10%
+    }
+    
+    // override the calculateInterest method to calculate interest with a bonus
+    @Override
+    public double calculateInterest() {
+        double baseInterest = super.calculateInterest();
+        double bonusInterest = balance * 0.05; // 5% bonus interest
+        return baseInterest + bonusInterest;
+    }
+}
+///////////////////////////////////////////////////
+Assignment 2: JDBC
+I have provided an implementation of commit to database below - and have a few questions for you:
+
+Q1. What is "JDBC_URL"? Can you give an example of that? Which database did you use?
+Answer-My database
+Q2: What if I don't close the connection? What will happen?
+
+Q3. Why "throws"?  What does this keyword denote?
+Answer- throwa keyword is used when we doesnt want to handle the exception and try to send the exception to the JVM. 
+Q4. Can you write a code to get Account details using JDBC?
+
+public void save() throws SQLException {
+        Connection connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
+        String sql = "INSERT INTO bank_accounts (account_number, balance, interest_rate) VALUES (?, ?, ?)";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, accountNumber);
+        statement.setDouble(2, balance);
+        statement.setDouble(3, interestRate);
+        statement.executeUpdate();
+        statement.close();
+        connection.close();
+    }
+	
+	/////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	Assignment 3: Take a look at the following code snippet and answer the questions:
+
+Q1. Which are the two databases this code is connecting to?
+Answer - mysql and PostgreSQL
+Q2. Can you explain why two different JDBC drivers had to be loaded?
+Answer - 
+Q3. Can you suggest how to make the code better using the "finally" block?
+Answer- Finally block is a real time block and the main purpose of finally block is that it handle the resource. 
+
+import java.sql.*;
+
+public class DatabaseExample {
+
+    public static void main(String[] args) {
+
+        // JDBC URL, username and password for MySQL
+        String mysqlUrl = "jdbc:mysql://localhost:3306/mydatabase";
+        String mysqlUsername = "myuser";
+        String mysqlPassword = "mypassword";
+
+        // JDBC URL, username and password for PostgreSQL
+        String postgresUrl = "jdbc:postgresql://localhost:5432/mydatabase";
+        String postgresUsername = "myuser";
+        String postgresPassword = "mypassword";
+
+        try {
+            // Load the MySQL JDBC driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // Connect to the MySQL database
+            Connection mysqlConn = DriverManager.getConnection(mysqlUrl, mysqlUsername, mysqlPassword);
+
+            // Load the PostgreSQL JDBC driver
+            Class.forName("org.postgresql.Driver");
+
+            // Connect to the PostgreSQL database
+            Connection postgresConn = DriverManager.getConnection(postgresUrl, postgresUsername, postgresPassword);
+
+            // Execute a query on the MySQL database
+            Statement mysqlStmt = mysqlConn.createStatement();
+            ResultSet mysqlRs = mysqlStmt.executeQuery("SELECT * FROM mytable");
+
+            // Execute a query on the PostgreSQL database
+            Statement postgresStmt = postgresConn.createStatement();
+            ResultSet postgresRs = postgresStmt.executeQuery("SELECT * FROM mytable");
+
+            // Process the results of the queries
+            while (mysqlRs.next()) {
+                // Process the MySQL result set
+            }
+
+            while (postgresRs.next()) {
+                // Process the PostgreSQL result set
+            }
+
+            // Close the connections
+            mysqlConn.close();
+            postgresConn.close();
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
